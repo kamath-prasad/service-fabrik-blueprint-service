@@ -22,6 +22,7 @@ def main():
     service_name = configuration['service_name']
     landscape = configuration['iaas'].title()
     iaas_client.initialize()
+    tags = [{'Key':'instance_id','Value':instance_id},{'Key':'service_name','Value':service_name}]
 
     try:
         tarball_files_name = 'blueprint-files.tar.gz.gpg'
@@ -38,7 +39,7 @@ def main():
 
         if backup_type == 'online':
             # +-> Create a snapshot of the persistent volume
-            snapshot_store = iaas_client.create_snapshot(volume_persistent.id,instance_id,service_name)
+            snapshot_store = iaas_client.create_snapshot(volume_persistent.id, tags)
             if not snapshot_store:
                 iaas_client.exit('Could not find the snapshot of the persistent volume {}.'
                                  .format(DIRECTORY_PERSISTENT))
@@ -156,7 +157,7 @@ def main():
             if landscape == 'Aws':
                 # +-> Copy Snapshot Function to encrypt the Snapshot
                 snapshot_store_encrypted = iaas_client.copy_snapshot(
-                    snapshot_store.id)
+                    snapshot_store.id, tags)
                 if not snapshot_store_encrypted:
                     iaas_client.exit('Could not create the encrypted copy of the snapshot {}.'
                                      .format(DIRECTORY_PERSISTENT))
