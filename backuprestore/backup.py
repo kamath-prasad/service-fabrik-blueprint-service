@@ -18,6 +18,8 @@ def main():
     backup_guid = configuration['backup_guid']
     backup_type = configuration['type']
     instance_id = configuration['instance_id']
+    backup_guid = configuration['backup_guid']
+    service_name = configuration['service_name']
     landscape = configuration['iaas'].title()
     iaas_client.initialize()
 
@@ -36,7 +38,7 @@ def main():
 
         if backup_type == 'online':
             # +-> Create a snapshot of the persistent volume
-            snapshot_store = iaas_client.create_snapshot(volume_persistent.id)
+            snapshot_store = iaas_client.create_snapshot(volume_persistent.id,instance_id,service_name)
             if not snapshot_store:
                 iaas_client.exit('Could not find the snapshot of the persistent volume {}.'
                                  .format(DIRECTORY_PERSISTENT))
